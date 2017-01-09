@@ -1,8 +1,8 @@
 {
-  "name": "rrg-img-test",
+  "name": "rrg-socket-test",
   "private": true,
   "description": "A quick way to test GraphQl & Relay",
-  "repository": "shahzad-dev/rrg-img-test",
+  "repository": "shahzad-dev/rrg-socket-test",
   "version": "0.0.1",
   "scripts": {
     "start": "babel-node ./server.js",

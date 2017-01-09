@@ -1,1 +1,1 @@
-# rrg-img-test
+# rrg-socket-test
