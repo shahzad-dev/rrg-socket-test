@@ -1,1 +1,1 @@
-# rrg-socket-test
+# socket-test
