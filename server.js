@@ -12,6 +12,7 @@ const GRAPHQL_PORT = 8000;
 
 let graphQLServer;
 let appServer;
+let io;
 
 function startAppServer(callback) {
     // Serve the Relay app
@@ -52,7 +53,7 @@ function startAppServer(callback) {
     });
 }
 
-function startGraphQLServer(callback) {
+function startGraphQLServer(io, callback) {
     // Expose a GraphQL endpoint
     clean('./data/schema');
     const {Schema} = require('./data/schema');
@@ -79,13 +80,25 @@ function startServers(callback) {
     exec('npm run update-schema', (error, stdout) => {
         console.log(stdout);
         let doneTasks = 0;
-        function handleTaskDone() {
+        function handleTaskDone(io) {
             doneTasks++;
             if (doneTasks === 2 && callback) {
                 callback();
             }
         }
-        startGraphQLServer(handleTaskDone);
+        startGraphQLServer(io, handleTaskDone);
+        io = require('socket.io')(graphQLServer);
+        io.sockets.on('connection', function(socket){
+          console.log('A user connected');
+
+          setTimeout(function(){
+           socket.send('Sent a message 4seconds after connection!');
+         }, 4000);
+
+          socket.on('disconnect', function () {
+              console.log('A user disconnected');
+            });
+        });
         startAppServer(handleTaskDone);
     });
 }
@@ -94,4 +107,5 @@ watcher.on('change', path => {
     console.log(`\`${path}\` changed. Restarting.`);
     startServers(() => console.log('Restart your browser to use the updated schema.'));
 });
+
 startServers();

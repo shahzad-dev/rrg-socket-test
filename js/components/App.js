@@ -1,7 +1,8 @@
 import React from 'react';
 import Relay from 'react-relay';
 import hobbyAddMutation from './hobbyAddMutation';
-
+import io from 'socket.io-client';
+const socket = io('http://localhost:8000/');
 class App extends React.Component {
 
     static contextTypes = {
@@ -14,9 +15,15 @@ class App extends React.Component {
 
       this.state = {
         count: 0,
+        message: ""
       }
     }
-
+componentDidMount() {
+    socket.on("message", (data) => {
+        console.log("Received", data);
+        this.setState({message: data});
+    });
+}
 _handle_OnChange = ( event ) => {
     //this.setState({count: this.state.count + 1});
     console.log(this.props.viewer.hobbies.edges.length);
@@ -32,7 +39,8 @@ _handle_OnChange = ( event ) => {
   render() {
     return (
       <div>
-        <h1>Hobbies list (Total: {this.state.count})</h1>
+        <h1>List (Total: {this.state.count})</h1>
+        <div>Message Received: {this.state.message}</div>
         <ul>
           {this.props.viewer.hobbies.edges.map((edge, i) =>
             <li key={i}>{edge.node.title} (ID: {i})</li>
